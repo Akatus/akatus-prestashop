@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+        <module>
+            <name>akatusb</name>
+            <displayName><![CDATA[Akatus - Boleto Banc&aacute;rio]]></displayName>
+            <version><![CDATA[1.0 Beta]]></version>
+            <description><![CDATA[Permite receber pagamentos com boleto banc&aacute;rio atrav&eacute;s do gateway Akatus]]></description>
+            <author><![CDATA[]]></author>
+            <tab><![CDATA[payments_gateways]]></tab>
+	<confirmUninstall>Tem certeza de que pretende eliminar os seus dados?</confirmUninstall>
+            <is_configurable>1</is_configurable>
+            <need_instance>1</need_instance>
+	<limited_countries></limited_countries>
+        </module>

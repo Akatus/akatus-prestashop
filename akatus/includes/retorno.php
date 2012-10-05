@@ -1,0 +1,88 @@
+<?php
+
+/*
+|---------------------------------------------------|
+|  MÓDULO DE PAGAMENTO AKATUS - CARTÕES DE CRÉDITO  |
+|---------------------------------------------------|
+|  Este módulo permite receber pagamentos através   |
+|  do gateway de pagamentos Akatus em lojas			|
+|   utilizando a plataforma Prestashop				|
+|---------------------------------------------------|
+|  Desenvolvido por: www.andresa.com.br				|
+|					 contato@andresa.com.br			|
+|---------------------------------------------------|
+*/
+
+
+/**
+ * @author Andresa Martins da Silva
+ * @copyright Andresa Web Studio
+ * @site http://www.andresa.com.br
+ * @version 1.0 Beta
+ **/
+
+include(dirname(__FILE__).'/../../../config/config.inc.php');
+include(dirname(__FILE__).'/../akatus.php');
+
+
+if ($_POST['token']==Configuration::get('AKATUS_TOKEN'))
+{
+
+        $id_transacao 		= $_POST['referencia'];
+        $status_pagamento 	= $_POST['status'];
+
+        $order 				= new Order(intval($id_transacao));
+        $cart 				= Cart::getCartByOrderId($id_transacao);
+
+        $mailVars 			= array('{bankwire_owner}' => '', '{bankwire_details}' => '',
+            '{bankwire_address}' => '');
+
+		/*
+			O Status "Completo" ainda não existe na API da Akatus
+			contudo, adicionei ele aqui pois é possível que um dia
+			ele seja adicionado
+		*/
+		
+		switch($_POST['status'])
+		{
+			case 'Completo':
+				$status = Configuration::get('AKATUS_STATUS_0');
+			break;
+			
+			case 'Aprovado':
+				$status = Configuration::get('AKATUS_STATUS_2');
+			break;
+			
+			case 'Cancelado':
+				$status = Configuration::get('AKATUS_STATUS_4');
+			break;
+			
+			case 'Em Análise':
+			case 'Em AnÃ¡lise':
+				$status = Configuration::get('AKATUS_STATUS_3');
+			break;
+			
+			default:
+				$status = _PS_OS_ERROR_;
+			break;
+		}
+        
+
+        $total 				= floatval(number_format($cart->getOrderTotal(true, 3), 2, '.', ''));
+
+		$akatus				= new Akatus();	
+		$idCustomer 		= $order->id_customer;
+		$idLang				= $order->id_lang;
+		$customer 			= new Customer(intval($idCustomer));
+		$CusMail			= $customer->email;
+
+        $extraVars 			= array();
+        $history 			= new OrderHistory();
+        $history->id_order 	= intval($id_transacao);
+        $history->changeIdOrderState(intval($status), intval($id_transacao));
+        @$history->addWithemail(true, $extraVars);
+
+        exit;
+}
+
+?>
