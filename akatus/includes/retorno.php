@@ -2,9 +2,9 @@
 
 /*
 |---------------------------------------------------|
-|  MÓDULO DE PAGAMENTO AKATUS - CARTÕES DE CRÉDITO  |
+|  Mï¿½DULO DE PAGAMENTO AKATUS - CARTï¿½ES DE CRï¿½DITO  |
 |---------------------------------------------------|
-|  Este módulo permite receber pagamentos através   |
+|  Este mï¿½dulo permite receber pagamentos atravï¿½s   |
 |  do gateway de pagamentos Akatus em lojas			|
 |   utilizando a plataforma Prestashop				|
 |---------------------------------------------------|
@@ -38,8 +38,8 @@ if ($_POST['token']==Configuration::get('AKATUS_TOKEN'))
             '{bankwire_address}' => '');
 
 		/*
-			O Status "Completo" ainda não existe na API da Akatus
-			contudo, adicionei ele aqui pois é possível que um dia
+			O Status "Completo" ainda nï¿½o existe na API da Akatus
+			contudo, adicionei ele aqui pois ï¿½ possï¿½vel que um dia
 			ele seja adicionado
 		*/
 		
@@ -47,6 +47,9 @@ if ($_POST['token']==Configuration::get('AKATUS_TOKEN'))
 		{
 			case 'Completo':
 				$status = Configuration::get('AKATUS_STATUS_0');
+			break;
+			case 'Aguardando Pagamento':
+				$status = Configuration::get('AKATUS_STATUS_1');
 			break;
 			
 			case 'Aprovado':
@@ -57,7 +60,7 @@ if ($_POST['token']==Configuration::get('AKATUS_TOKEN'))
 				$status = Configuration::get('AKATUS_STATUS_4');
 			break;
 			
-			case 'Em Análise':
+			case 'Em Anï¿½lise':
 			case 'Em AnÃ¡lise':
 				$status = Configuration::get('AKATUS_STATUS_3');
 			break;
