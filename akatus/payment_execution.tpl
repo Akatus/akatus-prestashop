@@ -39,7 +39,7 @@
       </LI>
       <LI>
         <label><img id='cartao_amex'  src='imagens/bandeiras/cartao_amex.gif' onclick='define_cartao("cartao_amex")'><BR>
-          <input name='bandeira_cartao' type='radio' value='cartao_master' onclick='define_cartao("cartao_amex")' />
+          <input name='bandeira_cartao' type='radio' value='cartao_amex' onclick='define_cartao("cartao_amex")' />
         </label>
       </LI>
     </ul>
