@@ -24,11 +24,10 @@
 include(dirname(__FILE__).'/../../../config/config.inc.php');
 include(dirname(__FILE__).'/../akatus.php');
 
-
 if ($_POST['token']==Configuration::get('AKATUS_TOKEN'))
 {
 
-        $id_transacao 		= $_POST['referencia'];
+	    $id_transacao 		= $_POST['referencia'];
         $status_pagamento 	= $_POST['status'];
 
         $order 				= new Order(intval($id_transacao));
@@ -48,6 +47,7 @@ if ($_POST['token']==Configuration::get('AKATUS_TOKEN'))
 			case 'Completo':
 				$status = Configuration::get('AKATUS_STATUS_0');
 			break;
+
 			case 'Aguardando Pagamento':
 				$status = Configuration::get('AKATUS_STATUS_1');
 			break;
@@ -60,18 +60,21 @@ if ($_POST['token']==Configuration::get('AKATUS_TOKEN'))
 				$status = Configuration::get('AKATUS_STATUS_4');
 			break;
 			
-			case 'Em An�lise':
 			case 'Em Análise':
 				$status = Configuration::get('AKATUS_STATUS_3');
+			break;
+
+			case 'Devolvido':
+				$status = configuration::get('AKATUS_STATUS_6');
+
 			break;
 			
 			default:
 				$status = _PS_OS_ERROR_;
 			break;
 		}
-        
 
-        $total 				= floatval(number_format($cart->getOrderTotal(true, 3), 2, '.', ''));
+		$total 				= floatval(number_format($cart->getOrderTotal(true, 3), 2, '.', ''));
 
 		$akatus				= new Akatus();	
 		$idCustomer 		= $order->id_customer;

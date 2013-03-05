@@ -74,7 +74,7 @@ function validarCartao()
     var ccCheckRegExp = /[^\d ]/;
 	
     isValid = !ccCheckRegExp.test(cardNumber);
-	
+
     if (isValid){
         var cardNumbersOnly = cardNumber.replace(/ /g,"");
         var cardNumberLength = cardNumbersOnly.length;
@@ -83,6 +83,7 @@ function validarCartao()
         var prefixRegExp;
 
 		switch(cardType){
+			
 			case "cartao_master":
 				lengthIsValid = (cardNumberLength == 16);
 				
@@ -92,7 +93,7 @@ function validarCartao()
 					return false;
 					
 				}
-				
+
 				if(document.getElementById('cartao_codigo').value.length!=3)
 				{
 					alert("Erro: O código de Segurança do cartão deve ter 3 dígitos!");
