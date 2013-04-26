@@ -83,7 +83,7 @@ class Akatus extends PaymentModule
 
 
 		
-		if(Configuration::get('AKATUS_STATUS_5'))
+		if(Configuration::get('AKATUS_STATUS_6'))
 			return true;
 		
 		$this->order_state = array(
@@ -92,7 +92,8 @@ class Akatus extends PaymentModule
 		array( 'ffffff', '10100', 'Akatus - Pagamento Aprovado',			 	 ''	),
 		array( 'fcffcf', '00100', 'Akatus - Pagamento em análise',				 ''	),
 		array( 'fec9c9', '11110', 'Akatus - Cancelado', 'order_canceled'	),
-		array( 'd6d6d6', '00100', 'Akatus - Em Aberto', ''	)
+		array( 'd6d6d6', '00100', 'Akatus - Em Aberto', ''	),
+		array( 'd6d6d6', '11110', 'Akatus - Devolvido', 'refund')
 
 		);
 		
