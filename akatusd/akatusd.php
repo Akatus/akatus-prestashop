@@ -78,17 +78,17 @@ class AkatusD extends PaymentModule
 	{
 		#Cria novos status para os pedidos
 		
-		if(Configuration::get('AKATUS_STATUS_6'))
+		if(Configuration::get('AKATUS_STATUS_5'))
 			return true;
 		
 		$this->order_state = array(
-			array( 'c9fecd', '11110', 'Akatus - Completo', 'payment' ),
-			array( 'ccfbff', '00100', 'Akatus - Aguardando Pagamento', ''),
-			array( 'ffffff', '10100', 'Akatus - Pagamento Aprovado', ''),
-			array( 'fcffcf', '00100', 'Akatus - Pagamento em análise', ''),
-			array( 'fec9c9', '11110', 'Akatus - Cancelado', 'order_canceled'),
-			array( 'd6d6d6', '00100', 'Akatus - Em Aberto', ''),
-			array( 'd6d6d6', '11110', 'Akatus - Devolvido', 'refund')
+		array( 'c9fecd', '11110', 'Akatus - Completo',	  	  'payment' ),
+		array( 'ccfbff', '00100', 'Akatus - Aguardando Pagamento', 		 ''	),
+		array( 'ffffff', '10100', 'Akatus - Pagamento Aprovado',			 	 ''	),
+		array( 'fcffcf', '00100', 'Akatus - Pagamento em análise',				 ''	),
+		array( 'fec9c9', '11110', 'Akatus - Cancelado', 'order_canceled'	),
+		array( 'd6d6d6', '00100', 'Akatus - Em Aberto', ''	)
+
 		);
 		
 		$languages = Db::getInstance()->ExecuteS('
@@ -98,46 +98,39 @@ class AkatusD extends PaymentModule
 			
 		foreach ($this->order_state as $key => $value)
 		{
-			Db::getInstance()->ExecuteS
+			Db::getInstance()->Execute
 			('
 				INSERT INTO `' . _DB_PREFIX_ . 'order_state` 
 			( `invoice`, `send_email`, `color`, `unremovable`, `logable`, `delivery`) 
 				VALUES
 			('.$value[1][0].', '.$value[1][1].', \'#'.$value[0].'\', '.$value[1][2].', '.$value[1][3].', '.$value[1][4].');
 			');
-
 			
-			$sql_status = Db::getInstance()->ExecuteS			
-			('
-				SELECT `id_order_state` FROM `'. _DB_PREFIX_ . 'order_state` order by `id_order_state` desc limit 1
-			');
-
-			$temp_atual = $sql_status[0]["id_order_state"];
-
+			$this->figura 	= mysql_insert_id();
+			
 			foreach ( $languages as $language_atual )
 			{
-				Db::getInstance()->ExecuteS
+				Db::getInstance()->Execute
 				('
 					INSERT INTO `' . _DB_PREFIX_ . 'order_state_lang` 
 				(`id_order_state`, `id_lang`, `name`, `template`)
 					VALUES
-				('.$temp_atual .', '.$language_atual['id_lang'].', \''.$value[2].'\', \''.$value[3].'\');
+				('.$this->figura .', '.$language_atual['id_lang'].', \''.$value[2].'\', \''.$value[3].'\');
 				');
-
+				
 			}
 			
 			
-			$file 		= (dirname(__file__) . "/icons/$key.gif");
-			$newfile 	= (dirname( dirname (dirname(__file__) ) ) . "/img/os/$temp_atual.gif");
-			
-			if (!copy($file, $newfile)) {
-				return false;
-			}
+				$file 		= (dirname(__file__) . "/icons/$key.gif");
+				$newfile 	= (dirname( dirname (dirname(__file__) ) ) . "/img/os/$this->figura.gif");
+				if (!copy($file, $newfile)) {
+    			return false;
+    			}
     			
-    		Configuration::updateValue("AKATUS_STATUS_$key", 	$temp_atual);
+    		Configuration::updateValue("AKATUS_STATUS_$key", 	$this->figura);
     		   				
 		}
-	
+		return true;
 		
 	}
 
@@ -145,11 +138,7 @@ class AkatusD extends PaymentModule
 	{
 		if 
 		(
-			!Configuration::deleteByName('AKATUS_MENSAGEM_EM_ANALISE')
-		OR	!Configuration::deleteByName('AKATUS_MENSAGEM_CANCELADO')
-		OR	!Configuration::deleteByName('AKATUS_MENSAGEM_APROVADO')
-		
-		OR 	!parent::uninstall()
+			!parent::uninstall()
 		) 
 			return false;
 		
@@ -517,7 +506,8 @@ class AkatusD extends PaymentModule
 		
 		return mysql_result($sql_status, 0);
     }
-	
+    
+  
 	public function getUrlByMyOrder($myOrder)
 	{
 

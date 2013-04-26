@@ -105,44 +105,19 @@ $endereco = mysql_query('
 		</recebedor>
 		<pagador>
 			<nome>'.$endereco->nome.' '.$endereco->sobrenome.'</nome>
-			<email>'.$endereco->email.'</email>';
-			
-			/*
-				Há um BUG na API que não permite cadastrar clientes do estado
-				do Mato Grosso, por isso se o cliente for de lá, a parte do
-				endereço será pulada.
-				
-				O endereço posto aqui é o da fatura, que é o que nos interessa.
-				Como no sistema Prestashop não há por padrão o campo NÚMERO no 
-				cadastro do endereço, deixei o trecho abaixo comentado. Caso você
-				necessite enviar o endereço para o gateway da Akatus, deverá criar
-				o campo número manualmente, adicioná-lo na SQL acima e informar 
-				o seu valor no XML abaixo no lugar de XXX. 
-				
-				Eu não adicionei o campo número pois o objetivo é ter um módulo
-				funcional para todas as instalações Prestashop sem a necessidade
-				de alterar o núcleo do sistema.
-			*/
-			
-			/*
-			if($endereco->sigla_estado !='MT')
-			{
-				$xm .='<enderecos>
-						<endereco>
-							<tipo>comercial</tipo>
-							<logradouro>'.$endereco->address1.'</logradouro>
-							<numero>XXX</numero>
-							<bairro>'.$endereco->address2.'</bairro>
-							<cidade>'.$endereco->cidade.'</cidade>
-							<estado>'.$endereco->sigla_estado.'</estado>
-							<pais>BRA</pais>
-							<cep>'.str_replace(array('.', '-'), '', $endereco->postcode).'</cep>
-						</endereco>
-					</enderecos>';
-				
-			}*/
-			
-			$xml .='
+			<email>'.$endereco->email.'</email>
+			<enderecos>
+				<endereco>
+					<tipo>comercial</tipo>
+					<logradouro>'.$endereco->endereco.'</logradouro>
+					<numero>XXX</numero>
+					<bairro>'.$endereco->complemento.'</bairro>
+					<cidade>'.$endereco->cidade.'</cidade>
+					<estado>'.$endereco->sigla_estado.'</estado>
+					<pais>BRA</pais>
+					<cep>'.str_replace(array('.', '-'), '', $endereco->cep).'</cep>
+				</endereco>
+			</enderecos>
 			<telefones>
 				<telefone>
 					<tipo>residencial</tipo>

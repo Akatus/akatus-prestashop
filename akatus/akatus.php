@@ -34,7 +34,8 @@ class Akatus extends PaymentModule
 
         $this->currencies 		= true;
         $this->currencies_mode 	= 'radio';
-
+	
+		
         parent::__construct();
 
         $this->page 			= basename(__file__, '.php');
@@ -46,9 +47,6 @@ class Akatus extends PaymentModule
 	
 	public function install()
 	{
-		
-		$this->create_states();
-		
 		if(!$email=Configuration::get('AKATUS_EMAIL_CONTA'))
 			$email='akatus@seudominio.com.br';
 		
@@ -57,7 +55,8 @@ class Akatus extends PaymentModule
 		
 		if(!$api=Configuration::get('AKATUS_API_KEY'))
 			$api='';
-			
+		
+		$this->create_states();
 		if 
 		(
 			!parent::install() 
@@ -84,17 +83,17 @@ class Akatus extends PaymentModule
 
 
 		
-		if(Configuration::get('AKATUS_STATUS_6'))
+		if(Configuration::get('AKATUS_STATUS_5'))
 			return true;
 		
 		$this->order_state = array(
-			array( 'c9fecd', '11110', 'Akatus - Completo', 'payment' ),
-			array( 'ccfbff', '00100', 'Akatus - Aguardando Pagamento', ''),
-			array( 'ffffff', '10100', 'Akatus - Pagamento Aprovado', ''),
-			array( 'fcffcf', '00100', 'Akatus - Pagamento em análise', ''),
-			array( 'fec9c9', '11110', 'Akatus - Cancelado', 'order_canceled'),
-			array( 'd6d6d6', '00100', 'Akatus - Em Aberto', ''),
-			array( 'd6d6d6', '11110', 'Akatus - Devolvido', 'refund')
+		array( 'c9fecd', '11110', 'Akatus - Completo',	  	  'payment' ),
+		array( 'ccfbff', '00100', 'Akatus - Aguardando Pagamento', 		 ''	),
+		array( 'ffffff', '10100', 'Akatus - Pagamento Aprovado',			 	 ''	),
+		array( 'fcffcf', '00100', 'Akatus - Pagamento em análise',				 ''	),
+		array( 'fec9c9', '11110', 'Akatus - Cancelado', 'order_canceled'	),
+		array( 'd6d6d6', '00100', 'Akatus - Em Aberto', ''	)
+
 		);
 		
 		$languages = Db::getInstance()->ExecuteS('
@@ -104,6 +103,9 @@ class Akatus extends PaymentModule
 			
 		foreach ($this->order_state as $key => $value)
 		{
+			
+
+
 			Db::getInstance()->ExecuteS
 			('
 				INSERT INTO `' . _DB_PREFIX_ . 'order_state` 
@@ -112,13 +114,21 @@ class Akatus extends PaymentModule
 			('.$value[1][0].', '.$value[1][1].', \'#'.$value[0].'\', '.$value[1][2].', '.$value[1][3].', '.$value[1][4].');
 			');
 
-			
-			$sql_status = Db::getInstance()->ExecuteS			
-			('
-				SELECT `id_order_state` FROM `'. _DB_PREFIX_ . 'order_state` order by `id_order_state` desc limit 1
-			');
 
-			$temp_atual = $sql_status[0]["id_order_state"];
+			
+			$sql_status = Db::getInstance()->ExecuteS
+		('
+			SELECT `id_order_state` FROM `'. _DB_PREFIX_ . 'order_state` order by `id_order_state` desc limit 1
+			
+		');
+
+
+
+		$temp_atual = $sql_status[0]["id_order_state"];
+
+		
+			
+
 
 			foreach ( $languages as $language_atual )
 			{
@@ -133,12 +143,11 @@ class Akatus extends PaymentModule
 			}
 			
 			
-			$file 		= (dirname(__file__) . "/icons/$key.gif");
-			$newfile 	= (dirname( dirname (dirname(__file__) ) ) . "/img/os/$temp_atual.gif");
-			
-			if (!copy($file, $newfile)) {
-				return false;
-			}
+				$file 		= (dirname(__file__) . "/icons/$key.gif");
+				$newfile 	= (dirname( dirname (dirname(__file__) ) ) . "/img/os/$temp_atual.gif");
+				if (!copy($file, $newfile)) {
+    			return false;
+    			}
     			
     		Configuration::updateValue("AKATUS_STATUS_$key", 	$temp_atual);
     		   				
@@ -244,7 +253,7 @@ class Akatus extends PaymentModule
 		$nbErrors = sizeof($this->_postErrors);
 		$this->_html .= '
 		<div class="alert error">
-			<h3>'.($nbErrors > 1 ? $this->l('Há') : $this->l('Há')).' '.$nbErrors.' '.($nbErrors > 1 ? $this->l('erros') : $this->l('error')).'</h3>
+			<h3>'.($nbErrors > 1 ? $this->l('There are') : $this->l('There is')).' '.$nbErrors.' '.($nbErrors > 1 ? $this->l('errors') : $this->l('error')).'</h3>
 			<ol>';
 		foreach ($this->_postErrors AS $error)
 			$this->_html .= '<li>'.$error.'</li>';
