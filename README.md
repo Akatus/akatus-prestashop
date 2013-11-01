@@ -8,7 +8,7 @@
 
 __Atenção:__ pode ser necessário desabilitar o cache do sistema para que as alterações entrem em vigor. Para isso, vá até *“Preferences >> Performance”*. Marque a opção “Force Compile” e desmarque a opção “Cache”. Clique em “Salvar”. Lembre-se de voltar essas opções da forma que estavam quando for colocar a loja em produção.
 
-* Abra o arquivo compactado que contém os módulos e extraia o diretório “modules” para a raiz da sua loja, sobrescrevendo os arquivos existentes.
+* Abra o arquivo compactado que contém os módulos e extraia os diretórios "modules" e "override” para a raiz da sua loja, sobrescrevendo os arquivos existentes.
 
 * Efetue login na Administração. Clique em “Modules” e role a página para baixo até encontrar a opção “Payments & Gateways”.
 
