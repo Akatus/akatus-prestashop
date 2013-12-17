@@ -6,7 +6,7 @@
 {assign var="current_step" value="payment"}
 {include file="$tpl_dir./order-steps.tpl"}
 
-<h3>{l s="Pagamento via Cartão de Crédito (Akatus)" mod="akatus"}</h3>
+<h3>{l s="Pagamento via CartÃ£o de CrÃ©dito (Akatus)" mod="akatus"}</h3>
 <script type="text/javascript" src="js/validacao.js"></script>
 <link href="estilos.css" rel="stylesheet" type="text/css" />
 <form action="{$this_path_ssl}validation.php" method="post" onsubmit="return pagar()" name="pagamento" id="pagamento">
@@ -67,7 +67,7 @@
           <td>&nbsp;</td>
           <td>
               <select name="cartao_mes" id="cartao_mes">
-                <option value="-1">MÊS</option>
+                <option value="-1">mês</option>
                 <option value="01">01</option>
                 <option value="02">02</option>
                 <option value="03">03</option>
@@ -83,7 +83,7 @@
               </select>
               /
               <select name="cartao_ano" id="cartao_ano">
-                <option value="-1">ANO</option>
+                <option value="-1">ano</option>
                 
 			  
 			 {$anos_validade_cartao}
@@ -130,7 +130,7 @@
     <BR>
     <BR>
     <div id="div_botao_enviar">
-    <input name="Bot�o" id="botao_enviar" type="button" value="Concluir Pagamento" class="button" onclick="pagar()" />
+    <input name="Botão" id="botao_enviar" type="button" value="Concluir Pagamento" class="button" onclick="pagar()" />
     </div>
     <div id="carregando"><center><img src="imagens/carregando.gif" /></center></div>
   </CENTER>
@@ -139,8 +139,8 @@
 
 <div id="popup" class="popup">
 <P><img src="imagens/fechar.jpg" width="20" height="20" align="absmiddle" /><a style="color:#F00; font-weight:bold" href="javascript:ocultar_popup()">Clique aqui para fechar</a></P>
-<p><strong>O que é o Código de Segurança?</strong><br />
-O código de segurança do cartão de crédito é uma seqüência numérica complementar ao número do cartão. Ele garante a veracidade dos dados de uma transação eletrônica, uma vez que a informação é verificada somente pelo portador do cartão e não consta em nenhum tipo de leitura magnética.</p>
+<p><strong>O que é o código de segurança?</strong><br />
+O código de segurança do cartão de crédito é uma sequência numérica complementar ao número do cartão. Ele garante a veracidade dos dados de uma transação eletrônica, uma vez que a informação é verificada somente pelo portador do cartão e não consta em nenhum tipo de leitura magnética.</p>
 <p><strong>Onde localizar o código de segurança?</strong></p>
 <p> <img src="imagens/visa.gif" width="189" height="135" align="left" /><br />
   <strong>Visa / MasterCard / Diners</strong><br />

@@ -7,7 +7,7 @@
 {include file="$tpl_dir./order-steps.tpl"}
 
 <h3>{l s="Pagamento via Cartão de Débito / Transferência Eletrônica - Akatus" mod="akatusd"}</h3>
-<p>Você pode efetuar o pagamento via Transferência Eletrônica / Cartão de Débito através dos bancos Bradesco, Itaú e Banco do Brasil. Para isso, tenha em mãos o Cartão de Débito da sua conta bancária e seu token. Depois, clique abaixo no botão referente ao seu banco. Ao completar a transferência, seu pagamento será automaticamente confirmado e o envio começará a ser processado.</p>
+<p>Você pode efetuar o pagamento via Transferência Eletrônica / Cartão de Débito através dos bancos Bradesco, Itaú e Banco do Brasil. Para isso, tenha em mãos o Cartão de Débito da sua conta bancária e seu token. Depois, clique abaixo no botão referente ao seu banco. Ao completar a transferência, seu pagamento será automaticamente confirmado e o envio será processado.</p>
 <script type="text/javascript" src="js/validacao.js"></script>
 <link href="estilos.css" rel="stylesheet" type="text/css" />
 <form action="{$this_path_ssl}validation.php" method="post" onsubmit="return concluir_compra()" name="pagamento" id="pagamento">
