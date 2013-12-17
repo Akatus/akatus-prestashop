@@ -1,27 +1,4 @@
 <?php
-/*
-+---------------------------------------------------+
-|  MÓDULO DE PAGAMENTO AKATUS - BOLETO BANCÁRIO		|
-|---------------------------------------------------|
-|													|
-|  Este módulo permite receber pagamentos através   |
-|  do gateway de pagamentos Akatus em lojas			|
-|  utilizando a plataforma Prestashop				|
-|													|
-|---------------------------------------------------|
-|													|
-|  Desenvolvido por: www.andresa.com.br				|
-|					 contato@andresa.com.br			|
-|													|
-+---------------------------------------------------+
-*/
-
-/**
- * @author Andresa Martins da Silva
- * @copyright Andresa Web Studio
- * @site http://www.andresa.com.br
-**/
-
 
 include(dirname(__FILE__).'/../../config/config.inc.php');
 include(dirname(__FILE__).'/../../header.php');
@@ -97,15 +74,9 @@ $endereco = mysql_query('
 	$endereco = mysql_fetch_object($endereco);		
 	$endereco->telefone=str_pad(substr(preg_replace("/[^0-9]/","",$endereco->phone), 0, 10), 10, "0", STR_PAD_RIGHT);
 
+    $fingerprint_akatus = isset($_POST['fingerprint_akatus']) ? $_POST['fingerprint_akatus'] : '';
+    $fingerprint_partner_id = isset($_POST['fingerprint_partner_id']) ? $_POST['fingerprint_partner_id'] : '';
 
-
-
-	#Processa o pagamento com cartão, enviando os dados informados
-	#pelo cliente para a Akatus e recebendo o status de retorno.
-	#De acordo com o retorno, uma mensagem diferente será exibida
-	#na última tela do pagamento, localizada no template payment_return.tpl
-	
-	#Fazer a requisição do pagamento enviando o XML
 	
     $xml='<?xml version="1.0" encoding="utf-8"?><carrinho>
 		<recebedor>
@@ -160,6 +131,10 @@ $endereco = mysql_query('
 			<referencia>'.($id_compra).'</referencia>
 			<meio_de_pagamento>boleto</meio_de_pagamento>
 		
+            <ip>'.filter_var($_SERVER['REMOTE_ADDR'], FILTER_VALIDATE_IP, FILTER_FLAG_IPV4).'</ip>
+            <fingerprint_akatus>'.$fingerprint_akatus.'</fingerprint_akatus>                
+            <fingerprint_partner_id>'.$fingerprint_partner_id.'</fingerprint_partner_id>                	
+
 		</transacao>
 	
 	</carrinho>';

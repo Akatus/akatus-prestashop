@@ -1,23 +1,4 @@
 <?php
-/*
-|---------------------------------------------------|
-|  MÓDULO DE PAGAMENTO AKATUS - CARTÕES DE CRÉDITO  |
-|---------------------------------------------------|
-|  Este módulo permite receber pagamentos através   |
-|  do gateway de pagamentos Akatus em lojas			|
-|   utilizando a plataforma Prestashop				|
-|---------------------------------------------------|
-|  Desenvolvido por: www.andresa.com.br				|
-|					 contato@andresa.com.br			|
-|---------------------------------------------------|
-*/
-
-
-/**
- * @author Andresa Martins da Silva
- * @copyright Andresa Web Studio
- * @site http://www.andresa.com.br
- **/
 
 class Akatus extends PaymentModule
 {
@@ -56,6 +37,9 @@ class Akatus extends PaymentModule
 		if(!$token=Configuration::get('AKATUS_TOKEN'))
 			$token='';
 		
+		if(!$public_token=Configuration::get('AKATUS_PUBLIC_TOKEN'))
+			$public_token='';
+
 		if(!$api=Configuration::get('AKATUS_API_KEY'))
 			$api='';
 
@@ -64,6 +48,7 @@ class Akatus extends PaymentModule
 			!parent::install() 
 		OR 	!Configuration::updateValue('AKATUS_EMAIL_CONTA', $email)
 		OR 	!Configuration::updateValue('AKATUS_TOKEN', 	  $token)
+		OR 	!Configuration::updateValue('AKATUS_PUBLIC_TOKEN', $public_token)
 		OR 	!Configuration::updateValue('AKATUS_API_KEY', 	  $api)
 		OR 	!Configuration::updateValue('AKATUS_BTN', 	  0)  
 		OR 	!Configuration::updateValue('AKATUS_MENSAGEM_EM_ANALISE',   'Seu pagamento encontra-se <span class="price">Em Análise</span> pela operadora do seu cartão de crédito. Você receberá um e-mail automático informando quando o mesmo for aprovado.')    
@@ -202,6 +187,11 @@ class Akatus extends PaymentModule
 						{
 							Configuration::updateValue('AKATUS_TOKEN', $_POST['akatus_token']);
 						}
+
+						if (!empty($_POST['akatus_public_token']))
+						{
+							Configuration::updateValue('AKATUS_PUBLIC_TOKEN', $_POST['akatus_public_token']);
+						}
 						
 						if (!empty($_POST['akatus_api_key']))
 						{
@@ -289,6 +279,7 @@ class Akatus extends PaymentModule
 		(array(
 			'AKATUS_EMAIL_CONTA',
 			'AKATUS_TOKEN',
+			'AKATUS_PUBLIC_TOKEN',
 			'AKATUS_API_KEY',
 			'AKATUS_PARCELAS_SEMJUROS', 
 			'AKATUS_MAXIMO_PARCELAS',
@@ -302,6 +293,8 @@ class Akatus extends PaymentModule
 		$email_conta	= array_key_exists('email_conta', $_POST) ? $_POST['email_conta'] : (array_key_exists('AKATUS_EMAIL_CONTA', $conf) ? $conf['AKATUS_EMAIL_CONTA'] : '');
 		
 		$token 			= array_key_exists('akatus_token', $_POST) ? $_POST['akatus_token'] : (array_key_exists('AKATUS_TOKEN', $conf) ? $conf['AKATUS_TOKEN'] : '');
+
+		$public_token	= array_key_exists('akatus_public_token', $_POST) ? $_POST['akatus_public_token'] : (array_key_exists('AKATUS_PUBLIC_TOKEN', $conf) ? $conf['AKATUS_PUBLIC_TOKEN'] : '');
 		
 		$api_key		= array_key_exists('akatus_api_key', $_POST) ? $_POST['akatus_api_key'] : (array_key_exists('AKATUS_API_KEY', $conf) ? $conf['AKATUS_API_KEY'] : '');
 		
@@ -315,19 +308,6 @@ class Akatus extends PaymentModule
 		
 		$mensagem_em_analise=array_key_exists('akatus_mensagem_em_analise', $_POST) ? $_POST['akatus_mensagem_em_analise'] : (array_key_exists('AKATUS_MENSAGEM_EM_ANALISE', $conf) ? $conf['AKATUS_MENSAGEM_EM_ANALISE'] : '');
 
-		/*
-		
-		Formulário para configuração do módulo
-		contém os seguintes campos:
-		
-		 - E-mail da Conta Akatus
-		 - API KEY
-		 - TOKEN NIP
-		 - Parcelamento sem juros até X parcelas
-		 - Número máximo de parcelas
-		
-		 
-		 */
 		 
 		 $combo_sem_juros='<select name="akatus_parcelas_semjuros" id="parcelas_semjuros">
 							  <option value="1">1</option>
@@ -356,6 +336,10 @@ class Akatus extends PaymentModule
 			<div class="margin-form"><input type="text" size="60" name="akatus_token" value="'.$token.'" /></div>
 			<br />
 			
+			<label>Public Token:</label>
+			<div class="margin-form"><input type="text" size="60" name="akatus_public_token" value="'.$public_token.'" /></div>
+			<br />
+
 			<label>API KEY:</label>
 			<div class="margin-form"><input type="text" size="60" name="akatus_api_key" value="'.$api_key.'" /></div>
 			<br />
@@ -403,25 +387,18 @@ class Akatus extends PaymentModule
 		
         foreach ($currencies as $key => $currency)
             $smarty->assign(array(
-			'currency_default' => new Currency(Configuration::get('PS_CURRENCY_DEFAULT')),
-            'currencies' => $currencies_used, 
-			'imgBtn' => "imagens/cartoes_akatus.jpg",
-			
-            'currency_default' => new Currency(Configuration::get('PS_CURRENCY_DEFAULT')),
-            'currencies' => $currencies_used, 
-			'total' => number_format(Tools::convertPrice($cart->getOrderTotal(true, 3), $currency), 2, '.', ''), 
-			'this_path_ssl' => (Configuration::get('PS_SSL_ENABLED') ?
-            'https://' : 'http://') . htmlspecialchars($_SERVER['HTTP_HOST'], ENT_COMPAT,'UTF-8') . __PS_BASE_URI__ . 'modules/' . $this->name . '/'));
-			
-			
-		
-		/*
-		
-		Começa a calcular os dados para exibir o pagamento com cartão
-		
-		*/
+                'public_token' => Configuration::get('AKATUS_PUBLIC_TOKEN'),
+                'currency_default' => new Currency(Configuration::get('PS_CURRENCY_DEFAULT')),
+                'currencies' => $currencies_used, 
+                'imgBtn' => "imagens/cartoes_akatus.jpg",
 
-
+                'currency_default' => new Currency(Configuration::get('PS_CURRENCY_DEFAULT')),
+                'currencies' => $currencies_used, 
+                'total' => number_format(Tools::convertPrice($cart->getOrderTotal(true, 3), $currency), 2, '.', ''), 
+                'this_path_ssl' => (Configuration::get('PS_SSL_ENABLED') ?
+                'https://' : 'http://') . htmlspecialchars($_SERVER['HTTP_HOST'], ENT_COMPAT,'UTF-8') . __PS_BASE_URI__ . 'modules/' . $this->name . '/'));
+			
+			
 		
 		$valor=number_format($cart->getOrderTotal(true, 3), 2, '.', '');
 		$maximo_parcelas=Configuration::get('AKATUS_MAXIMO_PARCELAS');
@@ -494,8 +471,8 @@ class Akatus extends PaymentModule
 
 	
 		$smarty->assign(array(
-		'anos_validade_cartao'	=> $anos_validade_cartao,
-		'parcelamento'			=> $parcelamento
+            'anos_validade_cartao'	=> $anos_validade_cartao,
+            'parcelamento'			=> $parcelamento
 		));
 
 		

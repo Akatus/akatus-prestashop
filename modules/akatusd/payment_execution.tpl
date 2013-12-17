@@ -29,3 +29,18 @@
     </div>
     <div id="carregando"><center><img src="imagens/carregando.gif" /></center></div>
   </form>
+
+<script>
+
+    $(function(){
+        $.getScript("https://static.akatus.com/js/akatus.min.js",function() {                                                                                                                                        
+            var formulario = document.getElementById('pagamento');
+            var config = {
+                publicToken: '{$public_token}'
+            };
+
+            Akatus.init(formulario, config);
+        });
+    });
+
+</script>

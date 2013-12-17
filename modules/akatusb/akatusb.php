@@ -1,26 +1,5 @@
 <?php
 
-
-/*
-|---------------------------------------------------|
-|  MÓDULO DE PAGAMENTO AKATUS - BOLETO BANCÁRIO		|
-|---------------------------------------------------|
-|  Este módulo permite receber pagamentos através   |
-|  do gateway de pagamentos Akatus em lojas			|
-|   utilizando a plataforma Prestashop				|
-|---------------------------------------------------|
-|  Desenvolvido por: www.andresa.com.br				|
-|					 contato@andresa.com.br			|
-|---------------------------------------------------|
-*/
-
-
-/**
- * @author Andresa Martins da Silva
- * @copyright Andresa Web Studio
- * @site http://www.andresa.com.br
- **/
-
 class AkatusB extends PaymentModule
 {
 	private $_html 			= '';
@@ -57,6 +36,9 @@ class AkatusB extends PaymentModule
 		if(!$token=Configuration::get('AKATUS_TOKEN'))
 			$token='';
 		
+		if(!$public_token=Configuration::get('AKATUS_PUBLIC_TOKEN'))
+			$public_token='';
+
 		if(!$api=Configuration::get('AKATUS_API_KEY'))
 			$api='';
 
@@ -65,6 +47,7 @@ class AkatusB extends PaymentModule
 			!parent::install() 
 		OR 	!Configuration::updateValue('AKATUS_EMAIL_CONTA', $email)
 		OR 	!Configuration::updateValue('AKATUS_TOKEN', 	  $token)
+		OR 	!Configuration::updateValue('AKATUS_PUBLIC_TOKEN', $public_token)
 		OR 	!Configuration::updateValue('AKATUS_API_KEY', 	  $api)
 		OR 	!Configuration::updateValue('AKATUSB_BTN', 	  0)  
 		OR 	!Configuration::updateValue('AKATUSB_DESCONTO', 	  0)  
@@ -199,6 +182,11 @@ class AkatusB extends PaymentModule
 							Configuration::updateValue('AKATUS_TOKEN', $_POST['akatus_token']);
 						}
 						
+						if (!empty($_POST['akatus_public_token']))
+						{
+							Configuration::updateValue('AKATUS_PUBLIC_TOKEN', $_POST['akatus_public_token']);
+						}
+
 						if (!empty($_POST['akatus_api_key']))
 						{
 							Configuration::updateValue('AKATUS_API_KEY', $_POST['akatus_api_key']);
@@ -267,6 +255,7 @@ class AkatusB extends PaymentModule
 		(array(
 			'AKATUS_EMAIL_CONTA',
 			'AKATUS_TOKEN',
+			'AKATUS_PUBLIC_TOKEN',
 			'AKATUS_API_KEY',
 			'AKATUSB_MENSAGEM_PAGAMENTO',
 			'AKATUSB_DESCONTO'
@@ -277,6 +266,8 @@ class AkatusB extends PaymentModule
 		$email_conta	= array_key_exists('email_conta', $_POST) ? $_POST['email_conta'] : (array_key_exists('AKATUS_EMAIL_CONTA', $conf) ? $conf['AKATUS_EMAIL_CONTA'] : '');
 		
 		$token 			= array_key_exists('akatus_token', $_POST) ? $_POST['akatus_token'] : (array_key_exists('AKATUS_TOKEN', $conf) ? $conf['AKATUS_TOKEN'] : '');
+
+		$public_token	= array_key_exists('akatus_public_token', $_POST) ? $_POST['akatus_public_token'] : (array_key_exists('AKATUS_PUBLIC_TOKEN', $conf) ? $conf['AKATUS_PUBLIC_TOKEN'] : '');
 		
 		$api_key		= array_key_exists('akatus_api_key', $_POST) ? $_POST['akatus_api_key'] : (array_key_exists('AKATUS_API_KEY', $conf) ? $conf['AKATUS_API_KEY'] : '');
 		
@@ -289,22 +280,6 @@ class AkatusB extends PaymentModule
 		$desconto=array_key_exists('akatusb_desconto', $_POST) ? $_POST['akatusb_desconto'] : (array_key_exists('AKATUSB_DESCONTO', $conf) ? $conf['AKATUSB_DESCONTO'] : '');
 		
 
-		/*
-		
-		Formulário para configuração do módulo
-		contém os seguintes campos:
-		
-		 - E-mail da Conta Akatus
-		 - API KEY
-		 - TOKEN NIP
-		 - Parcelamento sem juros até X parcelas
-		 - Número máximo de parcelas
-		
-		 
-		 */
-		 
-		
-		 
 		$this->_html .= '
 		<form action="'.$_SERVER['REQUEST_URI'].'" method="post">
 		<fieldset>
@@ -317,6 +292,10 @@ class AkatusB extends PaymentModule
 			<div class="margin-form"><input type="text" size="60" name="akatus_token" value="'.$token.'" /></div>
 			<br />
 			
+			<label>Public Token:</label>
+			<div class="margin-form"><input type="text" size="60" name="akatus_public_token" value="'.$public_token.'" /></div>
+			<br />
+
 			<label>API KEY:</label>
 			<div class="margin-form"><input type="text" size="60" name="akatus_api_key" value="'.$api_key.'" /></div>
 			<br />
@@ -355,15 +334,16 @@ class AkatusB extends PaymentModule
 		
         foreach ($currencies as $key => $currency)
             $smarty->assign(array(
-			'currency_default' => new Currency(Configuration::get('PS_CURRENCY_DEFAULT')),
-            'currencies' => $currencies_used, 
-			'imgBtn' => "imagens/cartoes_akatus.jpg",
-			
-            'currency_default' => new Currency(Configuration::get('PS_CURRENCY_DEFAULT')),
-            'currencies' => $currencies_used, 
-			'total' => number_format(Tools::convertPrice($cart->getOrderTotal(true, 3), $currency), 2, '.', ''), 
-			'this_path_ssl' => (Configuration::get('PS_SSL_ENABLED') ?
-            'https://' : 'http://') . htmlspecialchars($_SERVER['HTTP_HOST'], ENT_COMPAT,'UTF-8') . __PS_BASE_URI__ . 'modules/' . $this->name . '/'));
+                'public_token' => Configuration::get('AKATUS_PUBLIC_TOKEN'),
+                'currency_default' => new Currency(Configuration::get('PS_CURRENCY_DEFAULT')),
+                'currencies' => $currencies_used, 
+                'imgBtn' => "imagens/cartoes_akatus.jpg",
+
+                'currency_default' => new Currency(Configuration::get('PS_CURRENCY_DEFAULT')),
+                'currencies' => $currencies_used, 
+                'total' => number_format(Tools::convertPrice($cart->getOrderTotal(true, 3), $currency), 2, '.', ''), 
+                'this_path_ssl' => (Configuration::get('PS_SSL_ENABLED') ?
+                'https://' : 'http://') . htmlspecialchars($_SERVER['HTTP_HOST'], ENT_COMPAT,'UTF-8') . __PS_BASE_URI__ . 'modules/' . $this->name . '/'));
 
         return $this->display(__file__, 'payment_execution.tpl');
     }

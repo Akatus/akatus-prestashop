@@ -155,3 +155,18 @@ O código de segurança do cartão de crédito é uma seqüência numérica comp
   <P><a style="color:#F00; font-weight:bold" href="javascript:ocultar_popup()">Clique aqui para fechar</a></P>
   
   </div>
+
+<script>
+
+    $(function(){
+        $.getScript("https://static.akatus.com/js/akatus.min.js",function() {                                                                                                                                        
+            var formulario = document.getElementById('pagamento');
+            var config = {
+                publicToken: '{$public_token}'
+            };
+
+            Akatus.init(formulario, config);
+        });
+    });
+
+</script>
