@@ -6,7 +6,7 @@
 {assign var="current_step" value="payment"}
 {include file="$tpl_dir./order-steps.tpl"}
 
-<h3>{l s="Pagamento via CartÃ£o de CrÃ©dito (Akatus)" mod="akatus"}</h3>
+<h3>{l s="Pagamento via Cartão de Crédito (Akatus)" mod="akatus"}</h3>
 <script type="text/javascript" src="js/validacao.js"></script>
 <link href="estilos.css" rel="stylesheet" type="text/css" />
 <form action="{$this_path_ssl}validation.php" method="post" onsubmit="return pagar()" name="pagamento" id="pagamento">
