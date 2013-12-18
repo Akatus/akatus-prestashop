@@ -59,23 +59,25 @@ $mailVars = array
 
 */
 	$conexao=mysql_connect(_DB_SERVER_, _DB_USER_, _DB_PASSWD_);
-mysql_select_db( _DB_NAME_, $conexao);
+    mysql_select_db( _DB_NAME_, $conexao);
 
-$endereco = mysql_query('
-	SELECT a.`id_state`, a.`id_customer`, a.`firstname` nome, a.`lastname` sobrenome, 
-	a.`address1` endereco, a.`address2` complemento, a.`postcode` cep, a.`city` cidade, c.`email`, s.`iso_code` sigla_estado, a.`phone` 
-	FROM `'._DB_PREFIX_.'address` a, `'._DB_PREFIX_.'customer` c
-	
-	left join `'._DB_PREFIX_.'state` s
-		on s.`id_state`=`id_state`
-		
-	WHERE a.`id_address`='.$cart->id_address_invoice.' AND c.`id_customer`=a.`id_customer` LIMIT 1', $conexao);
+    $query_endereco = mysql_query('
+        SELECT a.`id_state`, a.`id_customer`, a.`firstname` nome, a.`lastname` sobrenome, 
+        a.`address1` endereco, a.`address2` complemento, a.`postcode` cep, a.`city` cidade, c.`email`, a.`phone` 
+        FROM `'._DB_PREFIX_.'address` a, `'._DB_PREFIX_.'customer` c
+        WHERE a.`id_address`='.$cart->id_address_invoice.' AND c.`id_customer`=a.`id_customer` LIMIT 1', $conexao);
 
+    $query_state = mysql_query('
+        SELECT `iso_code`
+        FROM `'._DB_PREFIX_.'state` s
+        left join `'._DB_PREFIX_.'address` a
+            on s.`id_state` = a.`id_state`
+        WHERE a.`id_address`='.$cart->id_address_invoice.'', $conexao);
 
-			
-	$endereco = mysql_fetch_object($endereco);		
-	$endereco->telefone=str_pad(substr(preg_replace("/[^0-9]/","",$endereco->phone), 0, 10), 10, "0", STR_PAD_RIGHT);
+	$endereco = mysql_fetch_object($query_endereco);		
+    $estado = mysql_fetch_object($query_state);
 
+	$endereco->telefone=substr(preg_replace("/[^0-9]/","",$endereco->phone), 0, 11);
 	
     $fingerprint_akatus = isset($_POST['fingerprint_akatus']) ? $_POST['fingerprint_akatus'] : '';
     $fingerprint_partner_id = isset($_POST['fingerprint_partner_id']) ? $_POST['fingerprint_partner_id'] : '';
@@ -94,10 +96,10 @@ $endereco = mysql_query('
 				<endereco>
 					<tipo>comercial</tipo>
 					<logradouro>'.$endereco->endereco.'</logradouro>
-					<numero>XXX</numero>
+					<numero></numero>
 					<bairro>'.$endereco->complemento.'</bairro>
 					<cidade>'.$endereco->cidade.'</cidade>
-					<estado>'.$endereco->sigla_estado.'</estado>
+                    <estado>'.$estado->iso_code.'</estado>
 					<pais>BRA</pais>
 					<cep>'.str_replace(array('.', '-'), '', $endereco->cep).'</cep>
 				</endereco>
@@ -130,9 +132,9 @@ $endereco = mysql_query('
 		<parcelas>'.$_POST['parcelas'].'</parcelas>
 		<codigo_de_seguranca>'.$_POST['cartao_codigo'].'</codigo_de_seguranca>
 		<expiracao>'.$_POST['cartao_mes'].'/'.$_POST['cartao_ano'].'</expiracao>
-		<desconto_total>0.00</desconto_total>
-		<peso_total>0.00</peso_total>
-		<frete_total>0.00</frete_total>
+		<desconto>0.00</desconto>
+		<peso>0.00</peso>
+		<frete>0.00</frete>
 		<moeda>BRL</moeda>
 		<referencia>'.($id_compra).'</referencia>
 		<meio_de_pagamento>'.$_POST['bandeira_cartao'].'</meio_de_pagamento>
