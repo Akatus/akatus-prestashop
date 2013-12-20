@@ -48,7 +48,7 @@ $mailVars = array
 	
 	$id_compra=$order->id;
 
-	
+	$order_products = $order->getProducts();
 
 /*
 
@@ -61,7 +61,7 @@ $mailVars = array
 
     $query_endereco = mysql_query('
         SELECT a.`id_state`, a.`id_customer`, a.`firstname` nome, a.`lastname` sobrenome, 
-        a.`address1` endereco, a.`address2` complemento, a.`postcode` cep, a.`city` cidade, c.`email`, a.`phone` 
+        a.`address1` endereco, a.`address2` complemento, a.`postcode` cep, a.`city` cidade, c.`email`, a.`phone`, a.`phone_mobile` 
         FROM `'._DB_PREFIX_.'address` a, `'._DB_PREFIX_.'customer` c
         WHERE a.`id_address`='.$cart->id_address_invoice.' AND c.`id_customer`=a.`id_customer` LIMIT 1', $conexao);
 
@@ -75,7 +75,7 @@ $mailVars = array
 	$endereco = mysql_fetch_object($query_endereco);		
     $estado = mysql_fetch_object($query_state);
 
-	$endereco->telefone=substr(preg_replace("/[^0-9]/","",$endereco->phone), 0, 11);
+	$endereco->celular=substr(preg_replace("/[^0-9]/","",$endereco->phone_mobile), 0, 11);
 
     $fingerprint_akatus = isset($_POST['fingerprint_akatus']) ? $_POST['fingerprint_akatus'] : '';
     $fingerprint_partner_id = isset($_POST['fingerprint_partner_id']) ? $_POST['fingerprint_partner_id'] : '';
@@ -105,33 +105,37 @@ $mailVars = array
 
 			<telefones>
 				<telefone>
-					<tipo>residencial</tipo>
-					<numero>'.$endereco->telefone.'</numero>
+					<tipo>celular</tipo>
+					<numero>'.$endereco->celular.'</numero>
 				</telefone>
 			</telefones>
 		</pagador>
 
-		<produtos>
+        <produtos>';
+
+        foreach($order_products as $order_product) {
+        
+			$xml .= '<produto>
+                        <codigo>'.$order_product['product_id'].'</codigo>
+                        <descricao><![CDATA['.$order_product['product_name'].']]></descricao>
+                        <quantidade>'.$order_product['product_quantity'].'</quantidade>
+                        <preco>'.number_format($order_product['unit_price_tax_incl'], 2, '.', '').'</preco>
+                        <peso>0</peso>
+                        <frete>0</frete>
+                        <desconto>0</desconto>
+                    </produto>';
+        }
 		   
-			<produto>
-				<codigo>1</codigo>
-				<descricao>Pedido '.$id_compra.' em http://'.Configuration::get('PS_SHOP_DOMAIN').'/</descricao>
-				<quantidade>1</quantidade>
-				<preco>'. $total .'</preco>
-				<peso>0.0</peso>
-				<frete>0.00</frete>
-				<desconto>0.00</desconto>
-			</produto>
-		</produtos>
+		$xml .= '</produtos>
 		
 		<transacao>
 		
-			<desconto>0.00</desconto>
-			<peso>0.00</peso>
-			<frete>0.00</frete>
+			<desconto>'.$order->total_discounts.'</desconto>
+			<frete>'.$order->total_shipping.'</frete>
+			<peso>0</peso>
 			<moeda>BRL</moeda>
 			
-			<referencia>'.($id_compra).'</referencia>
+			<referencia>'.$id_compra.'</referencia>
 			<meio_de_pagamento>boleto</meio_de_pagamento>
 		
             <ip>'.filter_var($_SERVER['REMOTE_ADDR'], FILTER_VALIDATE_IP, FILTER_FLAG_IPV4).'</ip>
@@ -141,8 +145,7 @@ $mailVars = array
 		</transacao>
 	
 	</carrinho>';
-	
-	
+
 		$xml=utf8_encode($xml);
 
 		$URL = "https://www.akatus.com/api/v1/carrinho.xml";
