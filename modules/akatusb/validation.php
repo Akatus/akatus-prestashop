@@ -32,14 +32,6 @@ $mailVars = array
 	);
 	
 
-
-	$desconto=Configuration::get('AKATUSB_DESCONTO');
-	
-	if($desconto > 0)
-		$total=number_format($total-($total*($desconto/100)), 2, '.', '');
-
-	
-	
 	$order 		= new Order($akatus->currentOrder);
 	$idCustomer = $order->id_customer;
 	$idLang		= $order->id_lang;

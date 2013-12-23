@@ -32,8 +32,6 @@ __Atenção:__ pode ser necessário desabilitar o cache do sistema para que as a
 
 * __Mensagem para a tela de impressão do boleto__ - Informe o texto que deve ser exibido no momento da emissão do boleto bancário. __*(somente boleto)*__
 
-* __Desconto %__ - Informe a taxa de desconto para compras realizada via TEF __*(opcional)*__
-
 ## Notificação Instantânea de Pagamento (NIP)
 
 Para receber as notificações de mudanças no status das transações é necessário:

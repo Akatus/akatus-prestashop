@@ -50,7 +50,6 @@ class AkatusB extends PaymentModule
 		OR 	!Configuration::updateValue('AKATUS_PUBLIC_TOKEN', $public_token)
 		OR 	!Configuration::updateValue('AKATUS_API_KEY', 	  $api)
 		OR 	!Configuration::updateValue('AKATUSB_BTN', 	  0)  
-		OR 	!Configuration::updateValue('AKATUSB_DESCONTO', 	  0)  
 		OR 	!Configuration::updateValue('AKATUSB_MENSAGEM_PAGAMENTO',   'Clique no botão abaixo para efetuar a impressão do seu boleto. Note que seu pedido começará a ser processado apenas após a confirmação do pagamento do boleto, o que pode levar até 3 dias úteis.')   
 
 		OR 	!$this->registerHook('payment') 
@@ -192,13 +191,6 @@ class AkatusB extends PaymentModule
 							Configuration::updateValue('AKATUS_API_KEY', $_POST['akatus_api_key']);
 						}
 						
-						if (!empty($_POST['akatusb_desconto']))
-						{
-							Configuration::updateValue('AKATUSB_DESCONTO', number_format(str_replace(array('%', ','), array('', '.'), $_POST['akatusb_desconto']), 2, '.', ''));
-						}
-						
-						
-						
 						if (!empty($_POST['akatusb_mensagem_pagamento']))
 						{
 							Configuration::updateValue('AKATUSB_MENSAGEM_PAGAMENTO', $_POST['akatusb_mensagem_pagamento']);
@@ -257,9 +249,7 @@ class AkatusB extends PaymentModule
 			'AKATUS_TOKEN',
 			'AKATUS_PUBLIC_TOKEN',
 			'AKATUS_API_KEY',
-			'AKATUSB_MENSAGEM_PAGAMENTO',
-			'AKATUSB_DESCONTO'
-			
+			'AKATUSB_MENSAGEM_PAGAMENTO'
 			  )
 		);
 		
@@ -277,9 +267,6 @@ class AkatusB extends PaymentModule
 		
 		$mensagem_pagamento=array_key_exists('akatusb_mensagem_pagamento', $_POST) ? $_POST['akatusb_mensagem_pagamento'] : (array_key_exists('AKATUSB_MENSAGEM_PAGAMENTO', $conf) ? $conf['AKATUSB_MENSAGEM_PAGAMENTO'] : '');
 		
-		$desconto=array_key_exists('akatusb_desconto', $_POST) ? $_POST['akatusb_desconto'] : (array_key_exists('AKATUSB_DESCONTO', $conf) ? $conf['AKATUSB_DESCONTO'] : '');
-		
-
 		$this->_html .= '
 		<form action="'.$_SERVER['REQUEST_URI'].'" method="post">
 		<fieldset>
@@ -299,13 +286,6 @@ class AkatusB extends PaymentModule
 			<label>API KEY:</label>
 			<div class="margin-form"><input type="text" size="60" name="akatus_api_key" value="'.$api_key.'" /></div>
 			<br />
-			<!--
-			<label>Desconto (%)</label>
-			<div class="margin-form"><input type="text" size="10" name="akatusb_desconto" value="'.$desconto.'" />%</div>
-			<br />
-			-->
-			
-			
 			
 			<label>Mensagem para a tela de impressão do boleto</label>
 			<div class="margin-form"><textarea name="akatusb_mensagem_pagamento" cols="80" rows="5">'.$mensagem_pagamento.'</textarea></div>

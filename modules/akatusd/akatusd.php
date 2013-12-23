@@ -50,7 +50,6 @@ class AkatusD extends PaymentModule
 		OR 	!Configuration::updateValue('AKATUS_PUBLIC_TOKEN', $public_token)
 		OR 	!Configuration::updateValue('AKATUS_API_KEY', 	  $api)
 		OR 	!Configuration::updateValue('AKATUSD_BTN', 	  0)  
-		OR 	!Configuration::updateValue('AKATUSD_DESCONTO', 	  0.00)  
 		OR 	!$this->registerHook('payment') 
 		OR 	!$this->registerHook('paymentReturn')
 		)
@@ -187,12 +186,6 @@ class AkatusD extends PaymentModule
 							Configuration::updateValue('AKATUS_API_KEY', $_POST['akatus_api_key']);
 						}
 						
-						if (!empty($_POST['akatusd_desconto']))
-						{
-							Configuration::updateValue('AKATUSD_DESCONTO',number_format(str_replace(array('%', ','), array('', '.'), $_POST['akatusd_desconto']), 2, '.', ''));
-						}
-						
-						
 					$this->displayConf();
 				}
 				else $this->displayErrors();
@@ -244,10 +237,7 @@ class AkatusD extends PaymentModule
 			'AKATUS_EMAIL_CONTA',
 			'AKATUS_TOKEN',
 			'AKATUS_PUBLIC_TOKEN',
-			'AKATUS_API_KEY',
-			'AKATUSD_DESCONTO'
-			
-			
+			'AKATUS_API_KEY'
 			  )
 		);
 		
@@ -258,9 +248,6 @@ class AkatusD extends PaymentModule
 		$public_token	= array_key_exists('akatus_public_token', $_POST) ? $_POST['akatus_public_token'] : (array_key_exists('AKATUS_PUBLIC_TOKEN', $conf) ? $conf['AKATUS_PUBLIC_TOKEN'] : '');
 		
 		$api_key		= array_key_exists('akatus_api_key', $_POST) ? $_POST['akatus_api_key'] : (array_key_exists('AKATUS_API_KEY', $conf) ? $conf['AKATUS_API_KEY'] : '');
-		
-		$desconto		= array_key_exists('akatusd_desconto', $_POST) ? $_POST['akatusd_desconto'] : (array_key_exists('AKATUSD_DESCONTO', $conf) ? $conf['AKATUSD_DESCONTO'] : '');
-		
 		
 		 
 		$this->_html .= '
@@ -282,12 +269,6 @@ class AkatusD extends PaymentModule
 			<label>API KEY:</label>
 			<div class="margin-form"><input type="text" size="60" name="akatus_api_key" value="'.$api_key.'" /></div>
 			<br />
-			
-			<label>DESCONTO (%):</label>
-			<div class="margin-form"><input type="text" size="10" name="akatusd_desconto" value="'.$desconto.'" /></div>
-			<br />
-			
-			
 			
 			<center><input type="submit" name="submitAkatus" value="'.$this->l('Atualizar').'" class="button" /></center>
 		</fieldset>

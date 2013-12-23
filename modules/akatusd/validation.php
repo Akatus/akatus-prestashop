@@ -38,11 +38,6 @@ $mailVars = array
 
 	$order_products = $order->getProducts();
 	
-	$desconto=Configuration::get('AKATUSD_DESCONTO');
-	
-	if($desconto > 0)
-		$total=number_format($total-($total*($desconto/100)), 2, '.', '');
-
 /*
 
 	Seleciona o endereço da fatura para enviar
