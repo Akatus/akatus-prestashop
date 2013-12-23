@@ -169,4 +169,12 @@ O código de segurança do cartão de crédito é uma sequência numérica compl
         });
     });
 
+    function mostrar_popup() {
+        $('#popup').show();
+    }
+
+    function ocultar_popup() {
+        $('#popup').hide();
+    }
+
 </script>
