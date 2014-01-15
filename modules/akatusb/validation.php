@@ -68,6 +68,18 @@ $mailVars = array
     $estado = mysql_fetch_object($query_state);
 
 	$endereco->celular=substr(preg_replace("/[^0-9]/","",$endereco->phone_mobile), 0, 11);
+	$endereco->telefone=substr(preg_replace("/[^0-9]/","",$endereco->phone), 0, 11);
+
+	$telefone_xml = "";
+	$celular_xml = "";
+
+	if (! empty($endereco->telefone)) {
+		$telefone_xml = "<telefone><tipo>residencial</tipo><numero>". $endereco->telefone ."</numero></telefone>";
+	}
+
+	if (! empty($endereco->celular)) {
+		$celular_xml = "<telefone><tipo>celular</tipo><numero>". $endereco->celular ."</numero></telefone>";
+	}
 
     $fingerprint_akatus = isset($_POST['fingerprint_akatus']) ? $_POST['fingerprint_akatus'] : '';
     $fingerprint_partner_id = isset($_POST['fingerprint_partner_id']) ? $_POST['fingerprint_partner_id'] : '';
@@ -95,12 +107,7 @@ $mailVars = array
 					</endereco>
 				</enderecos>
 
-			<telefones>
-				<telefone>
-					<tipo>celular</tipo>
-					<numero>'.$endereco->celular.'</numero>
-				</telefone>
-			</telefones>
+			<telefones>'. $telefone_xml . $celular_xml .'</telefones>
 		</pagador>
 
         <produtos>';
