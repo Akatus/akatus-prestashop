@@ -4,6 +4,28 @@ include(dirname(__FILE__).'/../../config/config.inc.php');
 include(dirname(__FILE__).'/../../header.php');
 include(dirname(__FILE__).'/akatus.php');
 
+
+function get_ip() {
+    $keys = array(
+        'HTTP_CLIENT_IP',
+        'HTTP_X_FORWARDED_FOR',
+        'HTTP_X_FORWARDED',
+        'HTTP_X_CLUSTER_CLIENT_IP',
+        'HTTP_FORWARDED_FOR',
+        'HTTP_FORWARDED',
+        'REMOTE_ADDR'
+    );
+
+    foreach ($keys as $key) {
+        if (array_key_exists($key, $_SERVER)) {
+            if (filter_var($_SERVER[$key], FILTER_VALIDATE_IP, FILTER_FLAG_IPV4) !== false) {
+                return $_SERVER[$key];
+            }
+        }
+    }
+}
+
+
 $currency = new Currency(intval(isset($_POST['currency_payement']) ? $_POST['currency_payement'] : $cookie->id_currency));
 $total = (number_format($cart->getOrderTotal(true, 3), 2, '.', ''));
 
@@ -167,7 +189,7 @@ $mailVars = array
 			<telefone>'.$telefone_cartao.'</telefone>
 		</portador>
 
-        <ip>'.filter_var($_SERVER['REMOTE_ADDR'], FILTER_VALIDATE_IP, FILTER_FLAG_IPV4).'</ip>
+        <ip>'.get_ip().'</ip>
         <fingerprint_akatus>'.$fingerprint_akatus.'</fingerprint_akatus>                
         <fingerprint_partner_id>'.$fingerprint_partner_id.'</fingerprint_partner_id>                	
 
