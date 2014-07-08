@@ -88,7 +88,7 @@ class AdminOrdersController extends AdminOrdersControllerCore
                 }
             }
         }
-
+        parent::postProcess();
     }
 
     private function getJSON($orderId)
